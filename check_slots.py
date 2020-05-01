@@ -16,7 +16,7 @@ else:
 repeat_interval_sec  = 30
 refresh_interval_sec = 5
 max_attempts         = 12
-g_infinite_alert     = False
+g_infinite_alert     = True
 shoprite_creds = {}
 with open ("config.txt", "r") as myfile:
     for line in myfile.readlines():
@@ -88,7 +88,7 @@ def check_slots():
 
 def alert_sound(statement = "Beep", infinite = False):
     if infinite:
-        while True:
+        while infinite:
             if sys.platform == 'win32':
                 winsound.MessageBeep()
             else:
@@ -115,6 +115,25 @@ def select_available_slot(driver, slots_available):
         time.sleep(2.3)
         driver.get('https://shop.shoprite.com/store/{}}/checkout'.format(shoprite_creds['store_id']))
         driver.find_element_by_id('includingPlasticBag_No').click()
+        checkout_buttons = driver.find_element_by_css_selector('button.checkoutStep__continueButton')
+        for checkout_button in checkout_buttons:
+            if checkout_button.text == 'Continue To Payment':
+                checkout_button.click()
+                break
+        driver.find_element_by_id('SelectedPaymentMethodId').click()
+
+        checkout_buttons = driver.find_element_by_css_selector('button.checkoutStep__continueButton')
+        for checkout_button in checkout_buttons:
+            if checkout_button.text == 'Place Order':
+                checkout_button.click()
+                break
+        
+        driver.find_element_by_id('ccNumber').send_keys(shoprite_creds['credit_card_number'])
+        driver.find_element_by_id('CreditExpiryMonth').send_keys(shoprite_creds['credit_card_exp_month'])
+        driver.find_element_by_id('creditExpiryYear').send_keys(shoprite_creds['credit_card_exp_year'])
+        driver.find_element_by_id('ccvv').send_keys(shoprite_creds['credit_card_security_code'])
+
+        driver.find_element_by_id('order_Continue_Btn').click()
     except Exception as e:
         print("failed here")
         terminate(driver)
