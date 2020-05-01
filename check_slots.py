@@ -8,10 +8,10 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 chromedriver = ROOT_DIR + "/chromedriver"
 
-# amazon credentials
 repeat_interval_sec  = 30
 refresh_interval_sec = 5
 max_attempts         = 12
+g_infinite_alert     = False
 shoprite_creds = {}
 with open ("credential.txt", "r") as myfile:
     for line in myfile.readlines():
@@ -64,19 +64,14 @@ def check_slots():
             #Read & Pick Time Slot
             slots = driver.find_elements_by_css_selector('.timeslotPicker__timeslotButton')
             for slot in slots:
-                if slot.text == 'Sold Out' or slot.text == '':
-                    print('Not available for slot'.format(slot))
-                else:
+                if slot.text != 'Sold Out':
                     slots_available.append(slot)
             if slots_available:
-                # while True:
-                #     os.system('say "Beer time."')
-                #     os.system('say "ShopRite Slot Available."')
-                #     time.sleep(1)
+                alert_sound("ShopRite Slot Available.", infinite=g_infinite_alert)
                 select_available_slot(driver, slots_available)
                 return None
             else:
-                print('No slots available. Sleeping ...')
+                print('No slots available. Refreshing and Retrying {} seconds'.format(refresh_interval_sec))
                 time.sleep(refresh_interval_sec)
                 driver.refresh()
 
@@ -85,6 +80,16 @@ def check_slots():
     except Exception as e:
         terminate(driver)
         raise ValueError(str(e))
+
+def alert_sound(statement = "Beep", infinite = False):
+    if infinite:
+        while True:
+            os.system('say "{}"'.format(statement))
+            time.sleep(1)
+    else:
+        for i in range(1,4):
+            os.system('say "{}"'.format(statement))
+            time.sleep(1)
 
 def select_available_slot(driver, slots_available):
     print('Slots Available!')
@@ -105,7 +110,7 @@ def select_available_slot(driver, slots_available):
         raise ValueError(str(e))
 
 if __name__ == "__main__":
-    available_slots = []
+    alert_sound("Sound Test", False)
     while not check_slots():
         print("Retrying in {} seconds".format(repeat_interval_sec))
         time.sleep(repeat_interval_sec)
