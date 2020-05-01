@@ -1,4 +1,4 @@
-import sys, os, re, requests, time, datetime, getpass
+import sys, os, re, time, datetime, getpass
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
