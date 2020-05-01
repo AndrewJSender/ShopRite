@@ -5,8 +5,13 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
+
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-chromedriver = ROOT_DIR + "/chromedriver"
+if sys.platform == 'win32':
+    import winsound
+    chromedriver = ROOT_DIR + "/chromedriver.exe"
+else:
+    chromedriver = ROOT_DIR + "/chromedriver"
 
 repeat_interval_sec  = 30
 refresh_interval_sec = 5
@@ -84,11 +89,17 @@ def check_slots():
 def alert_sound(statement = "Beep", infinite = False):
     if infinite:
         while True:
-            os.system('say "{}"'.format(statement))
+            if sys.platform == 'win32':
+                winsound.MessageBeep()
+            else:
+                os.system('say "{}"'.format(statement))
             time.sleep(1)
     else:
         for i in range(1,4):
-            os.system('say "{}"'.format(statement))
+            if sys.platform == 'win32':
+                winsound.MessageBeep()
+            else:
+                os.system('say "{}"'.format(statement))
             time.sleep(1)
 
 def select_available_slot(driver, slots_available):
