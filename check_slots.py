@@ -84,6 +84,7 @@ def check_slots():
         return None
     except Exception as e:
         terminate(driver)
+        alert_sound("Failed", g_infinite_alert)
         raise ValueError(str(e))
 
 def alert_sound(statement = "Beep", infinite = False):
