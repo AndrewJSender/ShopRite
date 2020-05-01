@@ -14,7 +14,7 @@ else:
     chromedriver = ROOT_DIR + "/chromedriver"
 
 repeat_interval_sec  = 30
-refresh_interval_sec = 5
+refresh_interval_sec = 10
 max_attempts         = 12
 g_infinite_alert     = False
 shoprite_creds = {}
@@ -77,8 +77,8 @@ def check_slots():
                 return None
             else:
                 print('No slots available. Refreshing and Retrying {} seconds'.format(refresh_interval_sec))
-                time.sleep(refresh_interval_sec)
                 driver.refresh()
+                time.sleep(refresh_interval_sec)
 
         terminate(driver)
         return None
@@ -122,7 +122,7 @@ def select_available_slot(driver, slots_available):
 
 if __name__ == "__main__":
     print("Sound Test ...")
-    alert_sound("Sound Test", False)
+    alert_sound("Beep", False)
     while not check_slots():
         print("Retrying in {} seconds".format(repeat_interval_sec))
         time.sleep(repeat_interval_sec)
