@@ -121,6 +121,7 @@ def select_available_slot(driver, slots_available):
         raise ValueError(str(e))
 
 if __name__ == "__main__":
+    print("Sound Test ...")
     alert_sound("Sound Test", False)
     while not check_slots():
         print("Retrying in {} seconds".format(repeat_interval_sec))
