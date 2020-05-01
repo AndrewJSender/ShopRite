@@ -1,0 +1,7 @@
+store_id:1420746
+email:Sender118@aol.com
+password:password123
+credit_card_number:1234567812345678
+credit_card_expiration_month:Jun
+credit_card_expiration_year:2024
+credit_card_security:123

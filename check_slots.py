@@ -4,7 +4,6 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from twilio.rest import Client
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 chromedriver = ROOT_DIR + "/chromedriver"
@@ -13,19 +12,11 @@ chromedriver = ROOT_DIR + "/chromedriver"
 repeat_interval_sec  = 30
 refresh_interval_sec = 5
 max_attempts         = 12
-shoprite_username = "Sender118@aol.com"
-# shoprite_password = getpass.getpass(prompt='Enter your password:')
-with open ("../../shoprite_password", "r") as myfile:
-    shoprite_password=myfile.read().strip("\n")
-shoprite_store_id = '1420746' #Chatham
-
-
-# twilio configuration
-to_mobilenumber = "+18888888888"
-from_mobilenumber = "+19999999999"
-account_sid = "fake_account_sid"
-auth_token = "fake_auth_token"
-client = Client(account_sid, auth_token)
+shoprite_creds = {}
+with open ("credential.txt", "r") as myfile:
+    for line in myfile.readlines():
+        [key, value] = line.strip("\n").split(':')
+        shoprite_creds[key] = value
 
 def create_driver():
     chrome_options = webdriver.ChromeOptions()
@@ -45,9 +36,9 @@ def check_slots():
         driver.get('https://shop.shoprite.com/store/{}'.format(shoprite_store_id))
         time.sleep(2.0)
         email_field = driver.find_element_by_name('Email')
-        email_field.send_keys(shoprite_username)
+        email_field.send_keys(shoprite_creds['email'])
         password_field = driver.find_element_by_name('Password')
-        password_field.send_keys(shoprite_password)
+        password_field.send_keys(shoprite_creds['password'])
         driver.find_element_by_id('SignIn').click()
         time.sleep(1.5)
 
@@ -56,9 +47,9 @@ def check_slots():
         cart.click()
         time.sleep(0.5)
         print('Checkout Step Two ... Reserve Slot')
-        driver.get('https://shop.shoprite.com/store/{}/cart'.format(shoprite_store_id))
+        driver.get('https://shop.shoprite.com/store/{}/cart'.format(shoprite_creds['store_id']))
         time.sleep(1.5)
-        driver.get('https://shop.shoprite.com/store/{}/reserve-timeslot'.format(shoprite_store_id))
+        driver.get('https://shop.shoprite.com/store/{}/reserve-timeslot'.format(shoprite_creds['store_id']))
         time.sleep(1.5)
 
         slots_available = []
@@ -106,7 +97,7 @@ def select_available_slot(driver, slots_available):
         driver.execute_script("window.scrollTo({}, {})".format(avail.rect['x'], avail.rect['y'])) 
         avail.click()
         time.sleep(2.3)
-        driver.get('https://shop.shoprite.com/store/1420746/checkout')
+        driver.get('https://shop.shoprite.com/store/{}}/checkout'.format(shoprite_creds['store_id']))
         driver.find_element_by_id('includingPlasticBag_No').click()
     except Exception as e:
         print("failed here")
