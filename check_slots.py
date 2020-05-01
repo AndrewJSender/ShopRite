@@ -13,7 +13,7 @@ refresh_interval_sec = 5
 max_attempts         = 12
 g_infinite_alert     = False
 shoprite_creds = {}
-with open ("credential.txt", "r") as myfile:
+with open ("config.txt", "r") as myfile:
     for line in myfile.readlines():
         [key, value] = line.strip("\n").split(':')
         shoprite_creds[key] = value
@@ -33,7 +33,7 @@ def check_slots():
         driver = create_driver()
 
         print('Logging into ShopRite ...')
-        driver.get('https://shop.shoprite.com/store/{}'.format(shoprite_store_id))
+        driver.get('https://shop.shoprite.com/store/{}'.format(shoprite_creds['store_id']))
         time.sleep(2.0)
         email_field = driver.find_element_by_name('Email')
         email_field.send_keys(shoprite_creds['email'])
