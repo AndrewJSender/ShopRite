@@ -64,7 +64,7 @@ def check_slots():
             #Read & Pick Time Slot
             slots = driver.find_elements_by_css_selector('.timeslotPicker__timeslotButton')
             for slot in slots:
-                if slot.text != 'Sold Out':
+                if slot.text != 'Sold Out' and slot.text != '':
                     slots_available.append(slot)
             if slots_available:
                 alert_sound("ShopRite Slot Available.", infinite=g_infinite_alert)
