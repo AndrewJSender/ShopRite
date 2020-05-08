@@ -18,7 +18,7 @@ refresh_interval_sec = 10
 max_attempts         = 12
 g_infinite_alert     = True
 shoprite_creds = {}
-with open ("config.txt", "r") as myfile:
+with open ("config/config.txt", "r") as myfile:
     for line in myfile.readlines():
         if line.startswith('#'):
             continue
