@@ -90,6 +90,7 @@ def check_slots():
         return None
     except Exception as e:
         terminate(driver)
+        print("Script Failed.  Ctrl + C to terminate script")
         alert_sound("Failed", g_infinite_alert)
         raise ValueError(str(e))
 
