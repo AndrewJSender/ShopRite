@@ -1,4 +1,2 @@
 .vscode/*
-./config/*
-config/config.txt
-config/*
+config.txt
