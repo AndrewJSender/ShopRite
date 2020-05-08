@@ -16,12 +16,18 @@ else:
 repeat_interval_sec  = 30
 refresh_interval_sec = 10
 max_attempts         = 12
-g_infinite_alert     = False
+g_infinite_alert     = True
 shoprite_creds = {}
 with open ("config.txt", "r") as myfile:
     for line in myfile.readlines():
-        [key, value] = line.strip("\n").split(':')
-        shoprite_creds[key] = value
+        if line.startswith('#'):
+            continue
+        else:
+            try:
+                [key, value] = line.strip("\n").split(':')
+                shoprite_creds[key] = value
+            except:
+                pass
 
 def create_driver():
     chrome_options = webdriver.ChromeOptions()
@@ -50,12 +56,12 @@ def check_slots():
         print('Checkout Step One ...')
         cart = driver.find_element_by_class_name('accountMenu__cart')
         cart.click()
-        time.sleep(0.5)
+        time.sleep(1.5)
         print('Checkout Step Two ... Reserve Slot')
         driver.get('https://shop.shoprite.com/store/{}/cart'.format(shoprite_creds['store_id']))
         time.sleep(1.5)
         driver.get('https://shop.shoprite.com/store/{}/reserve-timeslot'.format(shoprite_creds['store_id']))
-        time.sleep(1.5)
+        time.sleep(2.5)
 
         slots_available = []
         
