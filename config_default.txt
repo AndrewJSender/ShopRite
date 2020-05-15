@@ -8,3 +8,4 @@ credit_card_number:1234567812345678
 credit_card_expiration_month:01
 credit_card_expiration_year:20
 credit_card_security:123
+min_days_advanced:0

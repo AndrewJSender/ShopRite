@@ -78,13 +78,14 @@ def check_slots():
                 if slot.text != 'Sold Out' and slot.text != '':
                     slots_available.append(slot)
             if slots_available:
-                alert_sound("ShopRite Slot Available.", infinite=g_infinite_alert)
-                select_available_slot(driver, slots_available)
-                return None
-            else:
-                print('No slots available. Refreshing and Retrying {} seconds'.format(refresh_interval_sec))
-                driver.refresh()
-                time.sleep(refresh_interval_sec)
+                reserve_this_slot = select_available_slot(driver, slots_available)
+                if reserve_this_slot:
+                    reserve_slot(driver, reserve_this_slot)
+                    return None
+
+            print('No slots available. Refreshing and Retrying {} seconds'.format(refresh_interval_sec))
+            driver.refresh()
+            time.sleep(refresh_interval_sec)
 
         terminate(driver)
         return None
@@ -112,14 +113,24 @@ def alert_sound(statement = "Beep", infinite = False):
 
 def select_available_slot(driver, slots_available):
     print('Slots Available!')
+    now = datetime.datetime.now()
     for avail in slots_available:
-        #filtering here
         print(avail.text)
+        #filtering here
+        match = re.search("(.* 2020) at (.*) -", avail.text)
+        slot_datetime = datetime.datetime.strptime(match.group(1) + " " + match.group(2) , "%A, %B %d, %Y %I:%M %p")
+        delta = slot_datetime - now
+        delta_days = delta.days
+        if delta_days >= int(shoprite_creds['min_days_advanced']):
+            print("Selecting slot " + avail.text)
+            alert_sound("ShopRite Slot Available.", infinite=g_infinite_alert)
+            return avail
+        return None
 
-    avail = slots_available[0]
+def reserve_slot(driver, reserve_this_slot):
     try:
-        driver.execute_script("window.scrollTo({}, {})".format(avail.rect['x'], avail.rect['y'])) 
-        avail.click()
+        driver.execute_script("window.scrollTo({}, {})".format(reserve_this_slot.rect['x'], reserve_this_slot.rect['y'])) 
+        reserve_this_slot.click()
         time.sleep(2.3)
         driver.get('https://shop.shoprite.com/store/{}}/checkout'.format(shoprite_creds['store_id']))
         driver.find_element_by_id('includingPlasticBag_No').click()
